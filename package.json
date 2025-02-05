@@ -9,8 +9,5 @@
   "keywords": [],
   "author": "Huynh Huy Hoang",
   "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "express": "^4.21.2"
-  }
+  "description": ""
 }
