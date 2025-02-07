@@ -49,7 +49,7 @@ function getPublishedItems() {
 }
 
 // Function to get all categories
-function getCategories() {
+function getAllCategories() {
     return new Promise((resolve, reject) => {
         if (categories.length > 0) {
             resolve(categories);
@@ -63,5 +63,6 @@ module.exports = {
     initialize,
     getAllItems,
     getPublishedItems,
-    getCategories
+    getAllCategories
 };
+
