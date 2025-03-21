@@ -9,5 +9,14 @@
   "keywords": [],
   "author": "Huynh Huy Hoang",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "cloudinary": "^2.6.0",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-handlebars": "^8.0.1",
+    "multer": "^1.4.5-lts.2",
+    "streamifier": "^0.1.1"
+  }
 }

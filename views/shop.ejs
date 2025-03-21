@@ -1,0 +1,35 @@
+<article>
+    <h2><%= data.post.title %></h2>
+    <img src="<%= data.post.featureImage %>" alt="Feature Image" />
+
+    <div><%= data.post.body %></div>
+
+    <p>Category: <%= data.post.category %></p>
+    <p>Price: $<%= data.post.price %></p>
+    <p>Last Updated: <%= data.post.postDate %></p>
+
+    <% if (data.posts && data.posts.length > 0) { %>
+        <h4>Items</h4>
+        <ul>
+            <% data.posts.forEach(function(post) { %>
+                <li><a href="/shop/<%= post.id %>?category=<%= data.viewingCategory %>"><%= post.title %></a></li>
+            <% }); %>
+        </ul>
+    <% } %>
+
+    <% if (data.categories && data.categories.length > 0) { %>
+        <h4>Categories</h4>
+        <ul>
+            <% data.categories.forEach(function(category) { %>
+                <li><a href="/shop?category=<%= category.id %>"><%= category.name %></a></li>
+            <% }); %>
+        </ul>
+    <% } %>
+
+    <% if (!data.post) { %>
+        <div class="col-md-12 text-center">
+            <h2><%= data.message %></h2>
+            <p>Please try another Post / Category</p>
+        </div>
+    <% } %>
+</article>

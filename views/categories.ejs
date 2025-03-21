@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Categories</h2>
+                <hr />
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Category ID</th>
+                                <th>Category Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (categories && categories.length > 0) { %>
+                                <% categories.forEach(function(category) { %>
+                                    <tr>
+                                        <td>
+                                            <!-- Link to the items page with category filter -->
+                                            <a href="/items?category=<%= category.id %>">
+                                                <%= category.id %>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <!-- Link to the items page with category filter -->
+                                            <a href="/items?category=<%= category.id %>">
+                                                <%= category.name %>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="2" class="text-center">No categories found</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Display the message if there are no categories -->
+        <% if (message) { %>
+            <div class="col-md-12 text-center">
+                <strong><%= message %></strong>
+            </div>
+        <% } %>
+
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
