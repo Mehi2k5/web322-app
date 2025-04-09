@@ -39,6 +39,10 @@ const upload = multer();
 
 // Set EJS as the view engine
 app.set("view engine", "ejs");
+app.set("views", [
+    path.join(__dirname, "view"),  // Folder for about.ejs and store.ejs
+    path.join(__dirname, "views")  // Folder for other views
+]);
 
 // Middleware for form handling
 app.use(express.urlencoded({ extended: true }));
