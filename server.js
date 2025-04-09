@@ -1,10 +1,10 @@
 /*********************************************************************************
-*  WEB322 – Assignment 04
+*  WEB322 – Assignment 05
 *  I declare that this assignment is my own work in accordance with Seneca Academic Policy.
 *  No part of this assignment has been copied manually or electronically from any other source 
 *  (including 3rd party websites) or distributed to other students.
 * 
-*  Name: Huynh Huy Hoang Student ID: 151569233 Date: 18/03/2025
+*  Name: Huynh Huy Hoang Student ID: 151569233 Date: 09/04/2025
 *
 *  Replit Web App URL: https://replit.com/@12Huynh/web322-app
 * 
@@ -67,7 +67,7 @@ app.get("/shop", (req, res) => {
 });
 
 // Get items with optional filters
-// Get items with optional filters
+
 app.get("/items", (req, res) => {
     const { category, minDate } = req.query;
 
@@ -86,13 +86,18 @@ app.get("/items", (req, res) => {
     fetchItems
         .then(items => {
             console.log(`Found ${items.length} items`);
-            res.render("items", { items });
+            if (items.length > 0) {
+                res.render("items", { items });  // Renders "items" if data exists
+            } else {
+                res.render("items", { message: "No results found" });  // Shows message if no data
+            }
         })
         .catch(err => {
             console.error("Error fetching items:", err);
-            res.render("items", { message: "No results found" });
+            res.render("items", { message: "Error fetching items" });  // Show error message if promise rejected
         });
 });
+
 
 
 
@@ -107,10 +112,14 @@ app.get("/item/:id", (req, res) => {
 app.get("/categories", (req, res) => {
     Category.findAll() // Adjust to fetch categories from your DB
         .then((categories) => {
-            res.render("categories", { categories: categories });
+            if (categories.length > 0) {
+                res.render("categories", { categories });
+            } else {
+                res.render("categories", { message: "No results found" });
+            }
         })
         .catch((error) => {
-            res.render("categories", { message: "No results" });
+            res.render("categories", { message: "Error fetching categories" });
         });
 });
 
@@ -248,3 +257,94 @@ storeService.initialize()
         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     })
     .catch(error => console.error("Error initializing store data:", error));
+
+// Helper function
+function formatDate(dateObj) {
+    let year = dateObj.getFullYear();
+    let month = (dateObj.getMonth() + 1).toString();
+    let day = dateObj.getDate().toString();
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
+// Middleware to make it available in all EJS views
+app.use((req, res, next) => {
+    res.locals.formatDate = formatDate;
+    next();
+});
+
+// Route to show the form for adding a new category
+app.get("/categories/add", (req, res) => {
+    res.render("addCategory"); // Ensure you have an addCategory.ejs for this view
+});
+
+// Route to handle adding a new category via POST
+app.post("/categories/add", (req, res) => {
+    const { name, description } = req.body;  // Adjust field names based on your form inputs
+    storeService.addCategory({ name, description })
+        .then(() => res.redirect("/categories"))
+        .catch(err => res.status(500).json({ message: "Error adding category", error: err }));
+});
+
+// Route to get all categories
+app.get("/categories", (req, res) => {
+    Category.findAll()  // Replace with your actual method to fetch categories from your DB
+        .then((categories) => {
+            if (categories.length > 0) {
+                res.render("categories", { categories });
+            } else {
+                res.render("categories", { message: "No results found" });
+            }
+        })
+        .catch((error) => {
+            res.render("categories", { message: "Error fetching categories" });
+        });
+});
+
+// Route to handle deleting a category by ID
+app.get("/categories/delete/:id", (req, res) => {
+    const categoryId = req.params.id;
+    storeService.deleteCategoryById(categoryId)  // Implement this function in your store-service
+        .then(() => res.redirect("/categories"))
+        .catch((err) => res.status(500).send("Unable to Remove Category / Category not found"));
+});
+
+// Route to handle deleting an item by ID (similar to category delete)
+app.get("/items/delete/:id", (req, res) => {
+    const itemId = req.params.id;
+    storeService.deleteItemById(itemId)  // Implement this function in your store-service
+        .then(() => res.redirect("/items"))
+        .catch((err) => res.status(500).send("Unable to Remove Item / Item not found"));
+});
+
+
+// Route to render the addPost view
+router.get('/items/add', (req, res) => {
+    // Call the store-service to get categories
+    storeService.getCategories()
+        .then((categories) => {
+            // If categories are fetched successfully, pass them to the view
+            res.render('addPost', { categories: categories });
+        })
+        .catch((err) => {
+            // If there's an error, render the addPost view with an empty categories array
+            res.render('addPost', { categories: [] });
+        });
+});
+
+module.exports = router;
+
+// Route to delete a post by its ID
+app.get('/Items/delete/:id', (req, res) => {
+    const postId = req.params.id;
+
+    // Call the deletePostById function
+    storeService.deletePostById(postId)
+        .then(() => {
+            // Redirect to the list of posts after successful deletion
+            res.redirect('/Items');
+        })
+        .catch(err => {
+            // If error occurs, return a 500 status with an error message
+            res.status(500).send('Unable to Remove Post / Post not found');
+        });
+});

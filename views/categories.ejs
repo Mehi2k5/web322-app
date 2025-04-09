@@ -20,6 +20,7 @@
                             <tr>
                                 <th>Category ID</th>
                                 <th>Category Name</th>
+                                <th></th> <!-- Empty header for "Remove" button -->
                             </tr>
                         </thead>
                         <tbody>
@@ -38,11 +39,15 @@
                                                 <%= category.name %>
                                             </a>
                                         </td>
+                                        <td>
+                                            <!-- Remove button that links to delete category route -->
+                                            <a href="/categories/delete/<%= category.id %>" class="btn btn-danger">Remove</a>
+                                        </td>
                                     </tr>
                                 <% }); %>
                             <% } else { %>
                                 <tr>
-                                    <td colspan="2" class="text-center">No categories found</td>
+                                    <td colspan="3" class="text-center">No categories found</td>
                                 </tr>
                             <% } %>
                         </tbody>

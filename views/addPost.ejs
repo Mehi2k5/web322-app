@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Post</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Add New Post</h2>
+                <hr />
+                <form action="/posts/add" method="POST">
+                    <!-- Other fields for the post (e.g., title, content) -->
+
+                    <!-- Category Dropdown -->
+                    <% if (categories && categories.length > 0) { %>
+                        <div class="form-group">
+                            <label for="category">Category:</label>
+                            <select class="form-control" name="category" id="category">
+                                <option value="">Select Category</option>
+                                <% categories.forEach(function(category) { %>
+                                    <option value="<%= category.id %>"><%= category.name %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    <% } else { %>
+                        <div>No Categories</div>
+                    <% } %>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">Add Post</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
