@@ -49,7 +49,7 @@ app.use(express.static("public"));
 
 // Home route → Redirect to /shop
 app.get("/", (req, res) => {
-    res.redirect("/ahop");
+    res.redirect("/shop");
 });
 
 // About page
