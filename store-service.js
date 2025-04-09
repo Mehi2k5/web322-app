@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-
-var sequelize = new Sequelize('SenecaDB', 'SenecaDB_owner', 'npg_6BZ2tbfiSVDr', {
+const { Op } = Sequelize;
+const sequelize = new Sequelize('SenecaDB', 'SenecaDB_owner', 'npg_6BZ2tbfiSVDr', {
     host: 'ep-crimson-forest-a8orvnsz-pooler.eastus2.azure.neon.tech',
     dialect: 'postgres',
     port: 5432,
@@ -9,7 +9,6 @@ var sequelize = new Sequelize('SenecaDB', 'SenecaDB_owner', 'npg_6BZ2tbfiSVDr', 
     },
     query: { raw: true }
 });
-
 
 // Define the Category model
 const Category = sequelize.define("Category", {
@@ -29,10 +28,7 @@ const Item = sequelize.define("Item", {
 // Define the relationship
 Item.belongsTo(Category, { foreignKey: 'category' });
 
-
-const { Op } = Sequelize;
-
-// initialize
+// Initialize Sequelize
 module.exports.initialize = function () {
     return new Promise((resolve, reject) => {
         sequelize.sync()
@@ -41,7 +37,7 @@ module.exports.initialize = function () {
     });
 };
 
-// getAllItems
+// Get All Items
 module.exports.getAllItems = function () {
     return new Promise((resolve, reject) => {
         Item.findAll()
@@ -50,7 +46,7 @@ module.exports.getAllItems = function () {
     });
 };
 
-// getPublishedItems
+// Get Published Items
 module.exports.getPublishedItems = function () {
     return new Promise((resolve, reject) => {
         Item.findAll({
@@ -61,7 +57,7 @@ module.exports.getPublishedItems = function () {
     });
 };
 
-// getAllCategories
+// Get All Categories
 module.exports.getAllCategories = function () {
     return new Promise((resolve, reject) => {
         Category.findAll()
@@ -70,11 +66,10 @@ module.exports.getAllCategories = function () {
     });
 };
 
-// addItem
+// Add Item
 module.exports.addItem = function (itemData) {
     return new Promise((resolve, reject) => {
-        // Set published to true/false explicitly
-        itemData.published = (itemData.published) ? true : false;
+        itemData.published = itemData.published ? true : false;
 
         // Convert "" values to null
         for (let prop in itemData) {
@@ -92,7 +87,7 @@ module.exports.addItem = function (itemData) {
     });
 };
 
-// getItemsByCategory
+// Get Items by Category
 module.exports.getItemsByCategory = function (category) {
     return new Promise((resolve, reject) => {
         Item.findAll({
@@ -103,7 +98,7 @@ module.exports.getItemsByCategory = function (category) {
     });
 };
 
-// getItemsByMinDate
+// Get Items by Minimum Date
 module.exports.getItemsByMinDate = function (minDateStr) {
     return new Promise((resolve, reject) => {
         Item.findAll({
@@ -118,7 +113,7 @@ module.exports.getItemsByMinDate = function (minDateStr) {
     });
 };
 
-// getItemById
+// Get Item by ID
 module.exports.getItemById = function (id) {
     return new Promise((resolve, reject) => {
         Item.findAll({
@@ -132,7 +127,7 @@ module.exports.getItemById = function (id) {
     });
 };
 
-// getPublishedItemsByCategory
+// Get Published Items by Category
 module.exports.getPublishedItemsByCategory = function (category) {
     return new Promise((resolve, reject) => {
         Item.findAll({
@@ -146,55 +141,26 @@ module.exports.getPublishedItemsByCategory = function (category) {
     });
 };
 
-module.exports.getCategories = function () {
+// Add Category
+module.exports.addCategory = function (categoryData) {
     return new Promise((resolve, reject) => {
-        Category.findAll()
-            .then((data) => {
-                if (data.length > 0) {
-                    resolve(data);
-                } else {
-                    reject("no results returned");
-                }
-            })
-            .catch((err) => {
-                reject("no results returned");
-            });
-    });
-};
-
-
-
-const { Category, Post } = require('../models'); // adjust based on your actual model location
-
-// Add Category Function
-function addCategory(categoryData) {
-    return new Promise((resolve, reject) => {
-        // Replace all blank strings with null
         for (let key in categoryData) {
             if (categoryData[key] === "") {
                 categoryData[key] = null;
             }
         }
 
-        // Attempt to create a new Category
         Category.create(categoryData)
-            .then(() => {
-                resolve("Category created successfully");
-            })
-            .catch((err) => {
-                reject("Unable to create category: " + err.message);
-            });
+            .then(() => resolve("Category created successfully"))
+            .catch((err) => reject("Unable to create category: " + err.message));
     });
-}
+};
 
-// Delete Category by ID Function
-function deleteCategoryById(id) {
+// Delete Category by ID
+module.exports.deleteCategoryById = function (id) {
     return new Promise((resolve, reject) => {
-        // Attempt to delete the category by ID
         Category.destroy({
-            where: {
-                id: id
-            }
+            where: { id: id }
         })
             .then((deleted) => {
                 if (deleted === 0) {
@@ -203,20 +169,15 @@ function deleteCategoryById(id) {
                     resolve("Category deleted successfully");
                 }
             })
-            .catch((err) => {
-                reject("Unable to delete category: " + err.message);
-            });
+            .catch((err) => reject("Unable to delete category: " + err.message));
     });
-}
+};
 
-// Delete Post by ID Function
-function deletePostById(id) {
+// Delete Post by ID
+module.exports.deletePostById = function (id) {
     return new Promise((resolve, reject) => {
-        // Attempt to delete the post by ID
-        Post.destroy({
-            where: {
-                id: id
-            }
+        Item.destroy({
+            where: { id: id }
         })
             .then((deleted) => {
                 if (deleted === 0) {
@@ -225,38 +186,8 @@ function deletePostById(id) {
                     resolve("Post deleted successfully");
                 }
             })
-            .catch((err) => {
-                reject("Unable to delete post: " + err.message);
-            });
+            .catch((err) => reject("Unable to delete post: " + err.message));
     });
-}
-
-module.exports = {
-    addCategory,
-    deleteCategoryById,
-    deletePostById
 };
 
 
-// store-service.js
-const Post = require('./models/Post'); // Adjust based on your ORM or model
-
-/**
- * Delete a post by its ID.
- * @param {number} id - The ID of the post to delete.
- * @returns {Promise} Resolves if deleted, rejects if error occurs.
- */
-function deletePostById(id) {
-    return new Promise((resolve, reject) => {
-        Post.destroy({
-            where: { id: id }
-        })
-        .then(() => resolve())
-        .catch(err => reject(err));
-    });
-}
-
-module.exports = {
-    deletePostById,
-    // Other service methods
-};
